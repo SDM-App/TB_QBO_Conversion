@@ -1,0 +1,277 @@
+/*
+ * File: /css/variables.css
+ * Description: CSS Custom Properties for Trial Balance Import Tool
+ *              Two-layer system: Brand Palette → Semantic Tokens
+ *              Change colors globally by updating semantic token assignments
+ */
+
+/* ============================================
+   LAYER 1: BRAND PALETTE
+   Raw color values - don't use these directly in components
+   ============================================ */
+
+:root {
+  /* Core */
+  --brand-black: #000000;
+  --brand-white: #FFFFFF;
+  
+  /* Blues */
+  --brand-super-blue: #236CFF;
+  --brand-blueberry-110: #00254A;
+  
+  /* Aqua/Teals */
+  --brand-agave-30: #81F2FE;
+  --brand-agave-20: #C2F5FF;
+  
+  /* Neutrals */
+  --brand-wintermint-100: #EFF4F9;
+  --brand-tofu-100: #F4F4EF;
+  
+  /* Greens */
+  --brand-olive-10: #E7FDC8;
+  --brand-kiwi-50: #3BD85E;
+  --brand-spearmint-110: #003E31;
+  
+  /* Honey/Yellows */
+  --brand-honey-10: #FFF2C1;
+  --brand-honey-40: #F9C741;
+  --brand-honey-80: #AC6500;
+  
+  /* Reds/Pinks */
+  --brand-dragonfruit-20: #FFD1E9;
+  --brand-tomato: #FF5C37;
+  --brand-watermelon-110: #4F0513;
+  
+  /* Dark Grey - TO BE CONFIRMED */
+  --brand-dark-grey: #1A1F2E;
+  --brand-dark-grey-light: #252B3D;
+  --brand-dark-grey-lighter: #323A50;
+}
+
+
+/* ============================================
+   LAYER 2: SEMANTIC TOKENS - LIGHT MODE
+   Use THESE in components, not raw brand colors
+   ============================================ */
+
+:root {
+  /* ---------- Backgrounds ---------- */
+  --color-bg-page: var(--brand-dark-grey);
+  --color-bg-card: var(--brand-super-blue);
+  --color-bg-card-alt: var(--brand-dark-grey-light);
+  --color-bg-input: var(--brand-white);
+  --color-bg-input-disabled: var(--brand-dark-grey-lighter);
+  --color-bg-hover: var(--brand-dark-grey-lighter);
+  --color-bg-selected: var(--brand-blueberry-110);
+  
+  /* ---------- Text ---------- */
+  --color-text-primary: var(--brand-white);
+  --color-text-secondary: var(--brand-wintermint-100);
+  --color-text-muted: #8892A6;
+  --color-text-on-blue: var(--brand-white);
+  --color-text-on-light: var(--brand-blueberry-110);
+  --color-text-link: var(--brand-agave-30);
+  --color-text-link-hover: var(--brand-agave-20);
+  
+  /* ---------- Borders ---------- */
+  --color-border: var(--brand-dark-grey-lighter);
+  --color-border-light: rgba(255, 255, 255, 0.1);
+  --color-border-focus: var(--brand-super-blue);
+  --color-border-input: var(--brand-dark-grey-lighter);
+  
+  /* ---------- Interactive / Buttons ---------- */
+  --color-btn-primary-bg: var(--brand-super-blue);
+  --color-btn-primary-text: var(--brand-white);
+  --color-btn-primary-hover: #1B5AD9;
+  --color-btn-primary-active: #1550C9;
+  
+  --color-btn-secondary-bg: transparent;
+  --color-btn-secondary-text: var(--brand-white);
+  --color-btn-secondary-border: var(--brand-white);
+  --color-btn-secondary-hover-bg: rgba(255, 255, 255, 0.1);
+  
+  --color-btn-disabled-bg: var(--brand-dark-grey-lighter);
+  --color-btn-disabled-text: #5A6478;
+  
+  /* ---------- Status / Feedback ---------- */
+  --color-success: var(--brand-kiwi-50);
+  --color-success-bg: rgba(59, 216, 94, 0.15);
+  --color-success-border: var(--brand-kiwi-50);
+  --color-success-text: var(--brand-kiwi-50);
+  
+  --color-warning: var(--brand-honey-40);
+  --color-warning-bg: rgba(249, 199, 65, 0.15);
+  --color-warning-border: var(--brand-honey-40);
+  --color-warning-text: var(--brand-honey-40);
+  
+  --color-error: var(--brand-tomato);
+  --color-error-bg: rgba(255, 92, 55, 0.15);
+  --color-error-border: var(--brand-tomato);
+  --color-error-text: var(--brand-tomato);
+  
+  --color-info: var(--brand-agave-30);
+  --color-info-bg: rgba(129, 242, 254, 0.15);
+  --color-info-border: var(--brand-agave-30);
+  --color-info-text: var(--brand-agave-30);
+  
+  /* ---------- Table ---------- */
+  --color-table-header-bg: var(--brand-blueberry-110);
+  --color-table-header-text: var(--brand-white);
+  --color-table-row-bg: var(--brand-dark-grey-light);
+  --color-table-row-alt-bg: var(--brand-dark-grey);
+  --color-table-row-hover: var(--brand-dark-grey-lighter);
+  --color-table-border: var(--brand-dark-grey-lighter);
+  
+  /* Row status colors */
+  --color-row-mapped: var(--brand-dark-grey-light);
+  --color-row-locked: var(--brand-dark-grey);
+  --color-row-needs-review: rgba(249, 199, 65, 0.1);
+  --color-row-error: rgba(255, 92, 55, 0.1);
+  
+  /* ---------- Form Elements ---------- */
+  --color-input-bg: var(--brand-dark-grey-light);
+  --color-input-text: var(--brand-white);
+  --color-input-placeholder: #6B7588;
+  --color-input-border: var(--brand-dark-grey-lighter);
+  --color-input-border-focus: var(--brand-super-blue);
+  --color-input-border-error: var(--brand-tomato);
+  
+  --color-select-bg: var(--brand-dark-grey-light);
+  --color-select-text: var(--brand-white);
+  --color-select-arrow: var(--brand-white);
+  
+  --color-checkbox-bg: transparent;
+  --color-checkbox-border: var(--brand-dark-grey-lighter);
+  --color-checkbox-checked-bg: var(--brand-super-blue);
+  --color-checkbox-checked-border: var(--brand-super-blue);
+  --color-checkbox-checkmark: var(--brand-white);
+  
+  /* ---------- Dropzone ---------- */
+  --color-dropzone-bg: var(--brand-dark-grey-light);
+  --color-dropzone-border: var(--brand-dark-grey-lighter);
+  --color-dropzone-border-active: var(--brand-super-blue);
+  --color-dropzone-text: var(--brand-wintermint-100);
+  
+  /* ---------- Progress / Steps ---------- */
+  --color-step-inactive-bg: var(--brand-dark-grey-lighter);
+  --color-step-inactive-text: #6B7588;
+  --color-step-active-bg: var(--brand-super-blue);
+  --color-step-active-text: var(--brand-white);
+  --color-step-complete-bg: var(--brand-kiwi-50);
+  --color-step-complete-text: var(--brand-white);
+  --color-step-connector: var(--brand-dark-grey-lighter);
+  --color-step-connector-complete: var(--brand-kiwi-50);
+  
+  /* ---------- Shadows ---------- */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.5);
+  --shadow-focus: 0 0 0 3px rgba(35, 108, 255, 0.4);
+  
+  /* ---------- Spacing ---------- */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-xxl: 48px;
+  
+  /* ---------- Border Radius ---------- */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+  
+  /* ---------- Typography ---------- */
+  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-family-mono: "SF Mono", "Monaco", "Inconsolata", "Fira Code", monospace;
+  
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-md: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 20px;
+  --font-size-2xl: 24px;
+  --font-size-3xl: 30px;
+  --font-size-4xl: 36px;
+  
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+  
+  /* ---------- Transitions ---------- */
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+  --transition-slow: 350ms ease;
+  
+  /* ---------- Z-Index Scale ---------- */
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-modal-backdrop: 300;
+  --z-modal: 400;
+  --z-tooltip: 500;
+  --z-toast: 600;
+}
+
+
+/* ============================================
+   LAYER 3: LIGHT MODE OVERRIDE (Optional)
+   Uncomment and adjust if you need a light theme
+   ============================================ */
+
+/*
+[data-theme="light"] {
+  --color-bg-page: var(--brand-wintermint-100);
+  --color-bg-card: var(--brand-white);
+  --color-bg-card-alt: var(--brand-tofu-100);
+  
+  --color-text-primary: var(--brand-blueberry-110);
+  --color-text-secondary: #4A5568;
+  --color-text-muted: #718096;
+  
+  --color-border: #E2E8F0;
+  --color-border-light: #EDF2F7;
+  
+  --color-input-bg: var(--brand-white);
+  --color-input-text: var(--brand-blueberry-110);
+  --color-input-border: #CBD5E0;
+  
+  --color-table-row-bg: var(--brand-white);
+  --color-table-row-alt-bg: var(--brand-wintermint-100);
+  
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+*/
+
+
+/* ============================================
+   UTILITY: Color Preview (Dev Only)
+   Add class="color-preview" to see all colors
+   ============================================ */
+
+/*
+.color-preview {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1rem;
+  padding: 2rem;
+}
+
+.color-preview > div {
+  height: 80px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: flex-end;
+  padding: 0.5rem;
+  font-size: var(--font-size-xs);
+  font-family: var(--font-family-mono);
+}
+*/

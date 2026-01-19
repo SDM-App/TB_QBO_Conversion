@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+
+# IDE / Editor
+.idea/
+*.swp
+*.swo
+*~
+.vscode/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+nul
+
+# Private documentation
+$$DOCUMENTS/

@@ -1,0 +1,632 @@
+/*
+ * File: /css/states.css
+ * Description: Interactive States - Hover, Focus, Error, Warning, Success, Disabled
+ *              Also includes animations and transitions
+ *              Uses semantic tokens from variables.css
+ */
+
+/* ============================================
+   STATUS INDICATORS
+   ============================================ */
+
+/* Success state */
+.is-success {
+  color: var(--color-success-text);
+}
+
+.is-success .form-input,
+.is-success .form-select {
+  border-color: var(--color-success-border);
+}
+
+/* Warning state */
+.is-warning {
+  color: var(--color-warning-text);
+}
+
+.is-warning .form-input,
+.is-warning .form-select {
+  border-color: var(--color-warning-border);
+}
+
+/* Error state */
+.is-error {
+  color: var(--color-error-text);
+}
+
+.is-error .form-input,
+.is-error .form-select {
+  border-color: var(--color-error-border);
+}
+
+/* Info state */
+.is-info {
+  color: var(--color-info-text);
+}
+
+
+/* ============================================
+   DISABLED STATES
+   ============================================ */
+
+.is-disabled,
+[disabled],
+:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Specific disabled overrides */
+.form-input:disabled,
+.form-select:disabled,
+.btn:disabled {
+  opacity: 1; /* These have their own disabled styling */
+}
+
+/* Locked state (different from disabled - still visible but not editable) */
+.is-locked {
+  position: relative;
+  cursor: not-allowed;
+}
+
+.is-locked::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: transparent;
+  cursor: not-allowed;
+}
+
+.is-locked .form-input,
+.is-locked .form-select {
+  background-color: var(--color-bg-input-disabled);
+  color: var(--color-text-muted);
+}
+
+
+/* ============================================
+   LOADING STATES
+   ============================================ */
+
+.is-loading {
+  position: relative;
+  pointer-events: none;
+}
+
+.is-loading > * {
+  opacity: 0.5;
+}
+
+.is-loading::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 24px;
+  height: 24px;
+  border: 3px solid var(--color-border);
+  border-top-color: var(--brand-super-blue);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* Skeleton loading */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-bg-card-alt) 25%,
+    var(--color-bg-hover) 50%,
+    var(--color-bg-card-alt) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s ease-in-out infinite;
+  border-radius: var(--radius-sm);
+}
+
+.skeleton-text {
+  height: 1em;
+  margin-bottom: var(--space-sm);
+}
+
+.skeleton-text:last-child {
+  width: 60%;
+}
+
+.skeleton-circle {
+  border-radius: 50%;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+
+/* ============================================
+   ACTIVE / SELECTED STATES
+   ============================================ */
+
+.is-active {
+  background-color: var(--color-bg-selected);
+}
+
+.is-selected {
+  background-color: var(--color-bg-selected);
+  border-color: var(--brand-super-blue);
+}
+
+/* Toggle active state */
+.toggle.is-active {
+  background-color: var(--brand-super-blue);
+}
+
+
+/* ============================================
+   HOVER EFFECTS
+   ============================================ */
+
+/* Lift on hover */
+.hover-lift {
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Scale on hover */
+.hover-scale {
+  transition: transform var(--transition-fast);
+}
+
+.hover-scale:hover {
+  transform: scale(1.02);
+}
+
+/* Glow on hover */
+.hover-glow {
+  transition: box-shadow var(--transition-fast);
+}
+
+.hover-glow:hover {
+  box-shadow: 0 0 20px rgba(35, 108, 255, 0.3);
+}
+
+/* Highlight row on hover */
+.hover-highlight {
+  transition: background-color var(--transition-fast);
+}
+
+.hover-highlight:hover {
+  background-color: var(--color-bg-hover);
+}
+
+
+/* ============================================
+   FOCUS STATES
+   ============================================ */
+
+/* Focus ring */
+.focus-ring:focus,
+.focus-ring:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+/* Focus within (for groups) */
+.focus-within:focus-within {
+  border-color: var(--color-border-focus);
+  box-shadow: var(--shadow-focus);
+}
+
+
+/* ============================================
+   TRANSITIONS & ANIMATIONS
+   ============================================ */
+
+/* Fade in */
+.fade-in {
+  animation: fadeIn var(--transition-normal) ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Fade in up */
+.fade-in-up {
+  animation: fadeInUp var(--transition-normal) ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Fade in down */
+.fade-in-down {
+  animation: fadeInDown var(--transition-normal) ease-out;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Slide in from left */
+.slide-in-left {
+  animation: slideInLeft var(--transition-normal) ease-out;
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Slide in from right */
+.slide-in-right {
+  animation: slideInRight var(--transition-normal) ease-out;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Scale in */
+.scale-in {
+  animation: scaleIn var(--transition-fast) ease-out;
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Pulse */
+.pulse {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Bounce */
+.bounce {
+  animation: bounce 0.5s ease-in-out;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Shake (for errors) */
+.shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-5px);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(5px);
+  }
+}
+
+/* Spin */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* ============================================
+   VISIBILITY TRANSITIONS
+   ============================================ */
+
+/* Collapse/Expand */
+.collapse {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height var(--transition-normal) ease-out;
+}
+
+.collapse.is-open {
+  max-height: 1000px; /* Adjust based on content */
+}
+
+/* Show/Hide with fade */
+.show-hide {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--transition-fast), visibility var(--transition-fast);
+}
+
+.show-hide.is-visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+
+/* ============================================
+   ROW STATUS STATES (For Tables)
+   ============================================ */
+
+/* Mapped row - default, no special styling needed */
+.row-status-mapped {
+  /* Uses default row colors */
+}
+
+/* Locked row */
+.row-status-locked {
+  background-color: var(--color-row-locked) !important;
+}
+
+.row-status-locked td {
+  color: var(--color-text-muted);
+}
+
+.row-status-locked .form-select,
+.row-status-locked .form-input {
+  background-color: var(--color-bg-input-disabled);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Needs review row */
+.row-status-needs-review {
+  background-color: var(--color-row-needs-review) !important;
+}
+
+.row-status-needs-review td:first-child {
+  border-left: 3px solid var(--color-warning);
+}
+
+/* Error row */
+.row-status-error {
+  background-color: var(--color-row-error) !important;
+}
+
+.row-status-error td:first-child {
+  border-left: 3px solid var(--color-error);
+}
+
+/* Review row - alias for needs-review */
+.row-status-review {
+  background-color: var(--color-row-needs-review) !important;
+}
+
+.row-status-review td:first-child {
+  border-left: 3px solid var(--color-warning);
+}
+
+/* Skipped row */
+.row-status-skip {
+  opacity: 0.6;
+}
+
+.row-status-skip td {
+  background-color: var(--color-bg-muted, #f5f5f5) !important;
+  text-decoration: line-through;
+  color: var(--color-text-muted);
+}
+
+.row-status-skip td:first-child {
+  text-decoration: none; /* Don't strike through the checkbox */
+}
+
+.row-status-skip .form-select,
+.row-status-skip .form-input {
+  background-color: var(--color-bg-input-disabled);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Skip checkbox column styling */
+.th-skip,
+.td-skip {
+  width: 50px;
+  text-align: center;
+}
+
+.skip-checkbox {
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+}
+
+.skip-checkbox:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+
+/* ============================================
+   STATUS ICONS
+   ============================================ */
+
+.status-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  font-size: var(--font-size-xs);
+}
+
+.status-icon-success {
+  background-color: var(--color-success);
+  color: var(--brand-white);
+}
+
+.status-icon-warning {
+  background-color: var(--color-warning);
+  color: var(--brand-blueberry-110);
+}
+
+.status-icon-error {
+  background-color: var(--color-error);
+  color: var(--brand-white);
+}
+
+.status-icon-locked {
+  background-color: var(--color-text-muted);
+  color: var(--brand-white);
+}
+
+
+/* ============================================
+   NOTIFICATION STATES
+   ============================================ */
+
+/* Toast notifications */
+.toast {
+  position: fixed;
+  bottom: var(--space-lg);
+  right: var(--space-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  background-color: var(--color-bg-card-alt);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  z-index: var(--z-toast);
+  transform: translateX(120%);
+  transition: transform var(--transition-normal) ease-out;
+}
+
+.toast.is-visible {
+  transform: translateX(0);
+}
+
+.toast-success {
+  border-left: 4px solid var(--color-success);
+}
+
+.toast-warning {
+  border-left: 4px solid var(--color-warning);
+}
+
+.toast-error {
+  border-left: 4px solid var(--color-error);
+}
+
+.toast-info {
+  border-left: 4px solid var(--color-info);
+}
+
+.toast-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.toast-message {
+  flex: 1;
+  font-size: var(--font-size-sm);
+}
+
+.toast-close {
+  padding: var(--space-xs);
+  color: var(--color-text-muted);
+  transition: color var(--transition-fast);
+}
+
+.toast-close:hover {
+  color: var(--color-text-primary);
+}
+
+
+/* ============================================
+   EMPTY STATES
+   ============================================ */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xxl);
+  text-align: center;
+}
+
+.empty-state-icon {
+  width: 64px;
+  height: 64px;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-lg);
+}
+
+.empty-state-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--space-sm);
+}
+
+.empty-state-message {
+  color: var(--color-text-muted);
+  max-width: 400px;
+  margin-bottom: var(--space-lg);
+}
