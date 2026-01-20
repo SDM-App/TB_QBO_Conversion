@@ -1,0 +1,544 @@
+/*
+ * File: /css/help-panel.css
+ * Description: Styles for the collapsible help sidebar panel
+ *              Supports bilingual content, tabs, and PDF download
+ */
+
+/* ============================================
+   HELP PANEL CONTAINER
+   ============================================ */
+
+.help-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 380px;
+  height: 100vh;
+  background-color: var(--color-bg-page);
+  border-left: 1px solid var(--color-border);
+  box-shadow: var(--shadow-lg);
+  z-index: var(--z-modal);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform var(--transition-normal);
+}
+
+.help-panel.open {
+  transform: translateX(0);
+}
+
+/* Push main content when sidebar is open */
+body.help-panel-open .app-main {
+  margin-right: 380px;
+  transition: margin-right var(--transition-normal);
+}
+
+body .app-main {
+  transition: margin-right var(--transition-normal);
+}
+
+
+/* ============================================
+   HELP PANEL HEADER
+   ============================================ */
+
+.help-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md) var(--space-lg);
+  border-bottom: 1px solid var(--color-border);
+  background-color: var(--color-bg-card-alt);
+  flex-shrink: 0;
+}
+
+.help-panel-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.help-panel-title-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--brand-super-blue);
+}
+
+.help-panel-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.help-panel-lang-toggle {
+  display: flex;
+  background-color: var(--color-bg-page);
+  border-radius: var(--radius-md);
+  padding: 2px;
+}
+
+.help-panel-lang-btn {
+  padding: var(--space-xs) var(--space-sm);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-muted);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.help-panel-lang-btn:hover {
+  color: var(--color-text-primary);
+}
+
+.help-panel-lang-btn.active {
+  background-color: var(--brand-super-blue);
+  color: var(--brand-white);
+}
+
+.help-panel-close {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.help-panel-close:hover {
+  background-color: var(--color-bg-hover);
+  color: var(--color-text-primary);
+}
+
+.help-panel-close svg {
+  width: 20px;
+  height: 20px;
+}
+
+
+/* ============================================
+   HELP PANEL TABS
+   ============================================ */
+
+.help-panel-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--color-border);
+  background-color: var(--color-bg-card-alt);
+  flex-shrink: 0;
+}
+
+.help-panel-tab {
+  flex: 1;
+  padding: var(--space-md);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-muted);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.help-panel-tab:hover {
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-hover);
+}
+
+.help-panel-tab.active {
+  color: var(--brand-super-blue);
+  border-bottom-color: var(--brand-super-blue);
+}
+
+
+/* ============================================
+   HELP PANEL CONTENT
+   ============================================ */
+
+.help-panel-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-lg);
+}
+
+.help-panel-section {
+  display: none;
+}
+
+.help-panel-section.active {
+  display: block;
+}
+
+/* Content typography */
+.help-panel-content h2 {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-md) 0;
+  padding-bottom: var(--space-sm);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.help-panel-content h3 {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin: var(--space-lg) 0 var(--space-sm) 0;
+}
+
+.help-panel-content p {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+  color: var(--color-text-secondary);
+  margin: 0 0 var(--space-md) 0;
+}
+
+.help-panel-content ul,
+.help-panel-content ol {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+  color: var(--color-text-secondary);
+  margin: 0 0 var(--space-md) 0;
+  padding-left: var(--space-lg);
+}
+
+.help-panel-content li {
+  margin-bottom: var(--space-sm);
+}
+
+.help-panel-content a {
+  color: var(--color-text-link);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.help-panel-content a:hover {
+  color: var(--color-text-link-hover);
+  text-decoration: underline;
+}
+
+.help-panel-content strong {
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-semibold);
+}
+
+.help-panel-content code {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  background-color: var(--color-bg-card-alt);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+}
+
+/* Step indicators in content */
+.help-step {
+  display: flex;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+  padding: var(--space-md);
+  background-color: var(--color-bg-card-alt);
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--brand-super-blue);
+}
+
+.help-step-number {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--brand-super-blue);
+  color: var(--brand-white);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.help-step-content {
+  flex: 1;
+}
+
+.help-step-content h4 {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-xs) 0;
+}
+
+.help-step-content p {
+  margin: 0;
+  font-size: var(--font-size-sm);
+}
+
+/* Tip/Note boxes */
+.help-tip {
+  padding: var(--space-md);
+  background-color: var(--color-info-bg);
+  border: 1px solid var(--color-info-border);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-md);
+}
+
+.help-tip-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-info-text);
+  margin-bottom: var(--space-xs);
+}
+
+.help-tip p {
+  color: var(--color-info-text);
+  margin: 0;
+}
+
+.help-warning {
+  padding: var(--space-md);
+  background-color: var(--color-warning-bg);
+  border: 1px solid var(--color-warning-border);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-md);
+}
+
+.help-warning-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-warning-text);
+  margin-bottom: var(--space-xs);
+}
+
+.help-warning p {
+  color: var(--color-warning-text);
+  margin: 0;
+}
+
+
+/* ============================================
+   HELP PANEL FOOTER
+   ============================================ */
+
+.help-panel-footer {
+  padding: var(--space-md) var(--space-lg);
+  border-top: 1px solid var(--color-border);
+  background-color: var(--color-bg-card-alt);
+  flex-shrink: 0;
+}
+
+.help-panel-download-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-btn-primary-text);
+  background-color: var(--color-btn-primary-bg);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.help-panel-download-btn:hover {
+  background-color: var(--color-btn-primary-hover);
+}
+
+.help-panel-download-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+
+/* ============================================
+   HELP TOGGLE BUTTON (in header)
+   ============================================ */
+
+.help-toggle-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.help-toggle-btn:hover {
+  background-color: var(--color-bg-hover);
+  color: var(--color-text-primary);
+  border-color: var(--brand-super-blue);
+}
+
+.help-toggle-btn.active {
+  background-color: var(--brand-super-blue);
+  border-color: var(--brand-super-blue);
+  color: var(--brand-white);
+}
+
+.help-toggle-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+
+/* ============================================
+   RESPONSIVE - MOBILE
+   ============================================ */
+
+@media (max-width: 768px) {
+  .help-panel {
+    width: 100%;
+  }
+
+  body.help-panel-open .app-main {
+    margin-right: 0;
+  }
+
+  /* On mobile, use overlay instead of push */
+  .help-panel-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: calc(var(--z-modal) - 1);
+    opacity: 0;
+    visibility: hidden;
+    transition: all var(--transition-normal);
+  }
+
+  body.help-panel-open .help-panel-overlay {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+
+/* ============================================
+   LOADING STATE
+   ============================================ */
+
+.help-panel-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xxl);
+  color: var(--color-text-muted);
+}
+
+.help-panel-loading .spinner {
+  margin-bottom: var(--space-md);
+}
+
+
+/* ============================================
+   ERROR STATE
+   ============================================ */
+
+.help-panel-error {
+  padding: var(--space-lg);
+  text-align: center;
+  color: var(--color-error-text);
+}
+
+.help-panel-error-icon {
+  width: 48px;
+  height: 48px;
+  margin-bottom: var(--space-md);
+  color: var(--color-error);
+}
+
+.help-panel-error p {
+  color: var(--color-error-text);
+}
+
+
+/* ============================================
+   NOT AVAILABLE STATE
+   ============================================ */
+
+.help-panel-not-available {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xxl);
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+.help-panel-not-available svg {
+  margin-bottom: var(--space-md);
+}
+
+.help-panel-not-available p {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+}
+
+
+/* ============================================
+   HELP CONTENT STYLES
+   ============================================ */
+
+.help-summary {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  padding-bottom: var(--space-md);
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: var(--space-md);
+}
+
+.help-list-item {
+  padding-left: var(--space-md);
+  position: relative;
+}
+
+.help-list-item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.6em;
+  width: 4px;
+  height: 4px;
+  background-color: var(--color-text-muted);
+  border-radius: 50%;
+}
+
+.help-error-item {
+  padding: var(--space-sm) var(--space-md);
+  background-color: var(--color-bg-card-alt);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-sm);
+}
+
+.help-error-item p {
+  margin: 0;
+  font-size: var(--font-size-sm);
+}
