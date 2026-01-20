@@ -16,22 +16,38 @@
 const AccountMapper = (function() {
   'use strict';
 
-  // Default QBO codes for fallback by category
-  const CATEGORY_DEFAULTS = {
-    'Asset': 'CURASSET',           // Other current assets
-    'Liability': 'CURLIAB',        // Current liabilities
-    'Equity': 'RE',                // Retained earnings
-    'Income': 'INC',               // Other primary income
-    'COGS': 'COGS',                // Cost of goods sold
-    'Expense': 'EXP'               // Other miscellaneous service cost
-  };
-
   // Special account QBO codes
   const SPECIAL_ACCOUNT_CODES = {
     'ar': 'AR',    // Accounts Receivable
     'ap': 'AP',    // Accounts Payable
     're': 'RE'     // Retained Earnings
   };
+
+  /**
+   * Get default detail type code for a category (from Excel)
+   * @param {string} category - Category name (e.g., 'Asset', 'Liability')
+   * @returns {string|null} Detail type code or null if not found
+   */
+  function getCategoryDefault(category) {
+    const defaults = DataLoader.getDefaults();
+    if (defaults && defaults.byCategory && defaults.byCategory[category]) {
+      return defaults.byCategory[category];
+    }
+    return null;
+  }
+
+  /**
+   * Get fallback detail type code for non-special accounts (from Excel)
+   * @param {string} type - 'AR', 'AP', or 'RE'
+   * @returns {string|null} Detail type code or null if not found
+   */
+  function getFallback(type) {
+    const defaults = DataLoader.getDefaults();
+    if (defaults && defaults.fallbacks && defaults.fallbacks[type]) {
+      return defaults.fallbacks[type];
+    }
+    return null;
+  }
 
   /**
    * Map all accounts
@@ -147,7 +163,7 @@ const AccountMapper = (function() {
 
     // 5. Fall back to category default (if we have a category)
     if (category) {
-      const defaultCode = CATEGORY_DEFAULTS[category];
+      const defaultCode = getCategoryDefault(category);
       if (defaultCode) {
         applyMapping(result, defaultCode, 'digit');
         result.status = 'review'; // Defaults should be reviewed
@@ -414,11 +430,43 @@ const AccountMapper = (function() {
     return DataLoader.getAllTypes(lang);
   }
 
+  /**
+   * Remap an account to a different detail type
+   * Used when user decides to have single AR/AP or when RE accounts need fallback
+   * @param {number} index - Account index
+   * @param {string} newQboCode - New detail type code
+   * @returns {Object|null} Updated account or null if not found
+   */
+  function remapAccount(index, newQboCode) {
+    const results = AppState.getMappingResults();
+    const account = results.accounts[index];
+    if (!account) return null;
+
+    const lang = AppState.getLanguage();
+    const detailType = DataLoader.getDetailTypeByCode(newQboCode, lang);
+    if (!detailType) return null;
+
+    // Update the account mapping
+    account.qboCode = newQboCode;
+    account.typeCode = detailType.type_code;
+    account.typeName = getTypeNameByCode(detailType.type_code, lang);
+    account.detailTypeName = detailType.name;
+    account.category = detailType.category;
+    account.mappingSource = 'special-remap';
+    account.status = 'mapped';
+
+    // Update state
+    AppState.updateAccountMapping(index, account);
+
+    return account;
+  }
+
   // Public API
   return {
     mapAllAccounts,
     mapAccount,
     updateAccountMapping,
+    remapAccount,
     skipAccount,
     unskipAccount,
     getMappingStats,
@@ -428,7 +476,9 @@ const AccountMapper = (function() {
     isFullyMapped,
     getTypesForCategory,
     getDetailTypesForType,
-    getAllTypes
+    getAllTypes,
+    getCategoryDefault,
+    getFallback
   };
 
 })();

@@ -58,7 +58,7 @@
   /* ---------- Backgrounds ---------- */
   --color-bg-page: var(--brand-dark-grey);
   --color-bg-card: var(--brand-super-blue);
-  --color-bg-card-alt: var(--brand-dark-grey-light);
+  --color-bg-card-alt: var(--brand-blueberry-110);
   --color-bg-input: var(--brand-white);
   --color-bg-input-disabled: var(--brand-dark-grey-lighter);
   --color-bg-hover: var(--brand-dark-grey-lighter);
@@ -221,35 +221,123 @@
 
 
 /* ============================================
-   LAYER 3: LIGHT MODE OVERRIDE (Optional)
-   Uncomment and adjust if you need a light theme
+   LAYER 3: LIGHT MODE OVERRIDE
    ============================================ */
 
-/*
 [data-theme="light"] {
+  /* ---------- Backgrounds ---------- */
   --color-bg-page: var(--brand-wintermint-100);
   --color-bg-card: var(--brand-white);
-  --color-bg-card-alt: var(--brand-tofu-100);
-  
-  --color-text-primary: var(--brand-blueberry-110);
-  --color-text-secondary: #4A5568;
-  --color-text-muted: #718096;
-  
-  --color-border: #E2E8F0;
-  --color-border-light: #EDF2F7;
-  
-  --color-input-bg: var(--brand-white);
-  --color-input-text: var(--brand-blueberry-110);
-  --color-input-border: #CBD5E0;
-  
+  --color-bg-card-alt: #E8F4FD;
+  --color-bg-input: var(--brand-white);
+  --color-bg-input-disabled: #E5E7EB;
+  --color-bg-hover: #D1D5DB;
+  --color-bg-selected: #DBEAFE;
+
+  /* ---------- Text ---------- */
+  --color-text-primary: #111827;
+  --color-text-secondary: #374151;
+  --color-text-muted: #6B7280;
+  --color-text-on-blue: var(--brand-white);
+  --color-text-on-light: #111827;
+  --color-text-link: var(--brand-super-blue);
+  --color-text-link-hover: #1B5AD9;
+
+  /* ---------- Borders ---------- */
+  --color-border: #D1D5DB;
+  --color-border-light: #E5E7EB;
+  --color-border-focus: var(--brand-super-blue);
+  --color-border-input: #9CA3AF;
+
+  /* ---------- Interactive / Buttons ---------- */
+  --color-btn-primary-bg: var(--brand-super-blue);
+  --color-btn-primary-text: var(--brand-white);
+  --color-btn-primary-hover: #1B5AD9;
+  --color-btn-primary-active: #1550C9;
+
+  --color-btn-secondary-bg: transparent;
+  --color-btn-secondary-text: #111827;
+  --color-btn-secondary-border: #6B7280;
+  --color-btn-secondary-hover-bg: rgba(0, 0, 0, 0.08);
+
+  --color-btn-disabled-bg: #E5E7EB;
+  --color-btn-disabled-text: #9CA3AF;
+
+  /* ---------- Status / Feedback ---------- */
+  --color-success: #16A34A;
+  --color-success-bg: #DCFCE7;
+  --color-success-border: #16A34A;
+  --color-success-text: #166534;
+
+  --color-warning: #CA8A04;
+  --color-warning-bg: #FEF9C3;
+  --color-warning-border: #CA8A04;
+  --color-warning-text: #854D0E;
+
+  --color-error: #DC2626;
+  --color-error-bg: #FEE2E2;
+  --color-error-border: #DC2626;
+  --color-error-text: #991B1B;
+
+  --color-info: #0284C7;
+  --color-info-bg: #E0F2FE;
+  --color-info-border: #0284C7;
+  --color-info-text: #075985;
+
+  /* ---------- Table ---------- */
+  --color-table-header-bg: var(--brand-blueberry-110);
+  --color-table-header-text: var(--brand-white);
   --color-table-row-bg: var(--brand-white);
-  --color-table-row-alt-bg: var(--brand-wintermint-100);
-  
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.15);
+  --color-table-row-alt-bg: #F9FAFB;
+  --color-table-row-hover: #E5E7EB;
+  --color-table-border: #D1D5DB;
+
+  /* Row status colors */
+  --color-row-mapped: var(--brand-white);
+  --color-row-locked: #F3F4F6;
+  --color-row-needs-review: #FEF3C7;
+  --color-row-error: #FEE2E2;
+
+  /* ---------- Form Elements ---------- */
+  --color-input-bg: var(--brand-white);
+  --color-input-text: #111827;
+  --color-input-placeholder: #9CA3AF;
+  --color-input-border: #9CA3AF;
+  --color-input-border-focus: var(--brand-super-blue);
+  --color-input-border-error: #DC2626;
+
+  --color-select-bg: var(--brand-white);
+  --color-select-text: #111827;
+  --color-select-arrow: #374151;
+
+  --color-checkbox-bg: transparent;
+  --color-checkbox-border: #9CA3AF;
+  --color-checkbox-checked-bg: var(--brand-super-blue);
+  --color-checkbox-checked-border: var(--brand-super-blue);
+  --color-checkbox-checkmark: var(--brand-white);
+
+  /* ---------- Dropzone ---------- */
+  --color-dropzone-bg: #F9FAFB;
+  --color-dropzone-border: #9CA3AF;
+  --color-dropzone-border-active: var(--brand-super-blue);
+  --color-dropzone-text: #374151;
+
+  /* ---------- Progress / Steps ---------- */
+  --color-step-inactive-bg: #D1D5DB;
+  --color-step-inactive-text: #6B7280;
+  --color-step-active-bg: var(--brand-super-blue);
+  --color-step-active-text: var(--brand-white);
+  --color-step-complete-bg: #16A34A;
+  --color-step-complete-text: var(--brand-white);
+  --color-step-connector: #D1D5DB;
+  --color-step-connector-complete: #16A34A;
+
+  /* ---------- Shadows ---------- */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.18);
+  --shadow-focus: 0 0 0 3px rgba(35, 108, 255, 0.3);
 }
-*/
 
 
 /* ============================================

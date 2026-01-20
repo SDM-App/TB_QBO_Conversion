@@ -567,18 +567,21 @@ const FileReader = (function() {
    * @returns {Object} { accountNumber, accountName }
    */
   function splitByDelimiter(value, delimiter) {
-    if (!value || !delimiter) {
-      return { accountNumber: '', accountName: value || '' };
+    if (!value) {
+      return { accountNumber: '', accountName: '' };
     }
 
-    const index = value.indexOf(delimiter);
+    // If no delimiter specified, split on first space
+    const effectiveDelimiter = delimiter || ' ';
+
+    const index = value.indexOf(effectiveDelimiter);
     if (index === -1) {
-      // No delimiter found - assume it's all account name
+      // No delimiter found - treat entire value as account name
       return { accountNumber: '', accountName: value };
     }
 
     const leftPart = value.substring(0, index).trim();
-    const rightPart = value.substring(index + delimiter.length).trim();
+    const rightPart = value.substring(index + effectiveDelimiter.length).trim();
 
     // Check for QBDT hierarchical format: "Parent:1234" where digits are at the end after a colon
     // Pattern: parent path ending with ":digits"

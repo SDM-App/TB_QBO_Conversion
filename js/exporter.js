@@ -89,20 +89,27 @@ const Exporter = (function() {
     // Build CSV data
     const rows = [];
 
+    // Filter accounts with non-zero balances (exclude errors and skipped)
+    const nonZeroAccounts = accounts.filter(a =>
+      a.status !== 'error' && a.status !== 'skip' && a.balance !== 0
+    );
+
+    // Check if any AR/AP accounts exist (need Name column for QBO)
+    const hasArAp = nonZeroAccounts.some(a => a.qboCode === 'AR' || a.qboCode === 'AP');
+
     // Header row (QBO JE import format)
-    rows.push([
+    const header = [
       'Journal date',
       'Journal no.',
       'Memo/Description',
       'Account name',
       'Debits',
       'Credits'
-    ]);
-
-    // Filter accounts with non-zero balances (exclude errors and skipped)
-    const nonZeroAccounts = accounts.filter(a =>
-      a.status !== 'error' && a.status !== 'skip' && a.balance !== 0
-    );
+    ];
+    if (hasArAp) {
+      header.push('Name');
+    }
+    rows.push(header);
 
     if (nonZeroAccounts.length === 0) {
       alert(DataLoader.getString('error.noBalances', lang) || 'No accounts with balances to export.');
@@ -124,14 +131,18 @@ const Exporter = (function() {
       if (debit) totalDebits += parseFloat(debit);
       if (credit) totalCredits += parseFloat(credit);
 
-      rows.push([
+      const row = [
         dateStr,
         journalNo,
         'Opening Balances',
         account.accountName,
         debit ? formatNumber(debit) : '',
         credit ? formatNumber(credit) : ''
-      ]);
+      ];
+      if (hasArAp) {
+        row.push(getNameForAccount(account));
+      }
+      rows.push(row);
     }
 
     // Check if balanced
@@ -153,6 +164,17 @@ const Exporter = (function() {
 
     // Download
     downloadFile('JE_IMPORT.csv', csv, 'text/csv');
+  }
+
+  /**
+   * Get Name value for AR/AP accounts (required by QBO)
+   * @param {Object} account - The account object
+   * @returns {string} 'zCustomer' for AR, 'zVendor' for AP, empty string otherwise
+   */
+  function getNameForAccount(account) {
+    if (account.qboCode === 'AR') return 'zCustomer';
+    if (account.qboCode === 'AP') return 'zVendor';
+    return '';
   }
 
   /**
@@ -283,15 +305,31 @@ const Exporter = (function() {
       ? formatDateForQBO(setup.trialBalanceDate)
       : '-';
 
-    return {
-      headers: ['Date', 'Description', 'Account Name', 'Debit', 'Credit'],
-      rows: accounts.slice(0, maxRows).map(a => [
+    // Check if any AR/AP accounts exist (need Name column)
+    const hasArAp = accounts.some(a => a.qboCode === 'AR' || a.qboCode === 'AP');
+
+    const headers = ['Date', 'Description', 'Account Name', 'Debit', 'Credit'];
+    if (hasArAp) {
+      headers.push('Name');
+    }
+
+    const rows = accounts.slice(0, maxRows).map(a => {
+      const row = [
         dateStr,
         'Opening Balances',
         a.accountName,
         a.balance > 0 ? formatNumber(a.balance) : '',
         a.balance < 0 ? formatNumber(Math.abs(a.balance)) : ''
-      ]),
+      ];
+      if (hasArAp) {
+        row.push(getNameForAccount(a));
+      }
+      return row;
+    });
+
+    return {
+      headers,
+      rows,
       totalRows: accounts.length
     };
   }

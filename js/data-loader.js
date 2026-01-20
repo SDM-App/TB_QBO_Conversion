@@ -12,10 +12,15 @@ const DataLoader = (function() {
   let _data = {
     categories: [],      // { Category, Name_EN, Name_FR }
     types: [],           // { Type_Code, Category, Name_EN, Name_FR }
-    detailTypes: [],     // { Type_Code, Code, Name_EN, Name_FR }
+    detailTypes: [],     // { Type_Code, Code, Name_EN, Name_FR, IsDefault, IsFallback }
     gifi: {},            // { [gifiCode]: { qboCode } } - descriptions for maintenance only, not displayed
     keywords: {},        // { [category]: [{ Keyword, Priority, QBO_Code }] }
-    uiStrings: UI_STRINGS  // Loaded from ui-strings.js
+    categoryIndicators: [], // { keyword, category, points } - for scoring categories when no account number
+    uiStrings: UI_STRINGS,  // Loaded from ui-strings.js
+    defaults: {
+      byCategory: {},    // { [category]: detailTypeCode } - default detail type per category
+      fallbacks: {}      // { AR: code, AP: code, RE: code } - fallback for non-special accounts
+    }
   };
 
   // Lookup indexes for fast access
@@ -61,9 +66,13 @@ const DataLoader = (function() {
           parseDetailTypes(workbook);
           parseGIFI(workbook);
           parseKeywords(workbook);
+          parseCategoryIndicators(workbook);
 
           // Build indexes
           buildIndexes();
+
+          // Process defaults (needs indexes to be built first)
+          processDefaults();
 
           _loaded = true;
           console.log('Reference data loaded successfully');
@@ -103,7 +112,7 @@ const DataLoader = (function() {
   }
 
   /**
-   * Parse DetailTypes sheet
+   * Parse DetailTypes sheet and extract defaults
    */
   function parseDetailTypes(workbook) {
     const sheet = workbook.Sheets['DetailTypes'];
@@ -112,6 +121,38 @@ const DataLoader = (function() {
       return;
     }
     _data.detailTypes = XLSX.utils.sheet_to_json(sheet);
+
+    // Reset defaults
+    _data.defaults = {
+      byCategory: {},
+      fallbacks: {}
+    };
+
+    // Extract IsDefault and IsFallback info
+    // Note: Need to build categoryByType first, but it's done in buildIndexes() which runs after
+    // So we store the raw data and process in buildIndexes()
+  }
+
+  /**
+   * Process defaults after indexes are built
+   */
+  function processDefaults() {
+    for (const dt of _data.detailTypes) {
+      // Check IsDefault column - marks default detail type for category
+      const isDefault = dt.IsDefault;
+      if (isDefault === 'TRUE' || isDefault === 'Y' || isDefault === '1' || isDefault === true) {
+        const category = _indexes.categoryByType[dt.Type_Code];
+        if (category) {
+          _data.defaults.byCategory[category] = dt.Code;
+        }
+      }
+
+      // Check IsFallback column - AR, AP, or RE
+      const fallback = dt.IsFallback;
+      if (fallback && String(fallback).trim()) {
+        _data.defaults.fallbacks[String(fallback).trim().toUpperCase()] = dt.Code;
+      }
+    }
   }
 
   /**
@@ -174,6 +215,23 @@ const DataLoader = (function() {
     for (const category of Object.keys(_data.keywords)) {
       _data.keywords[category].sort((a, b) => a.priority - b.priority);
     }
+  }
+
+  /**
+   * Parse CategoryIndicators sheet for points-based category scoring
+   */
+  function parseCategoryIndicators(workbook) {
+    const sheet = workbook.Sheets['CategoryIndicators'];
+    if (!sheet) {
+      console.warn('CategoryIndicators sheet not found');
+      return;
+    }
+    const rows = XLSX.utils.sheet_to_json(sheet);
+    _data.categoryIndicators = rows.map(row => ({
+      keyword: (row.Keyword || '').toUpperCase(),
+      category: row.Category || '',
+      points: parseInt(row.Points, 10) || 0
+    })).filter(ind => ind.keyword && ind.category && ind.points > 0);
   }
 
 
@@ -342,16 +400,24 @@ const DataLoader = (function() {
 
   /**
    * Search for matching keyword in account name
+   * Uses points-based scoring when no category is provided
    * @param {string} accountName - Account name to search
-   * @param {string} category - Category to search within
-   * @returns {Object|null} Best matching keyword result { keyword, qboCode }
+   * @param {string} category - Category to search within (optional)
+   * @returns {Object|null} Best matching keyword result { keyword, qboCode, category }
    */
   function findKeywordMatch(accountName, category = null) {
     if (!accountName) return null;
 
     const upperName = accountName.toUpperCase();
 
-    // If category provided, search only that category
+    // Helper: Check if keyword matches as a whole word
+    function isWholeWordMatch(name, keyword) {
+      const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const regex = new RegExp(`\\b${escaped}\\b`);
+      return regex.test(name);
+    }
+
+    // If category provided, search only that category (existing behavior)
     if (category) {
       const keywords = _data.keywords[category];
       if (!keywords) return null;
@@ -369,30 +435,83 @@ const DataLoader = (function() {
       return null;
     }
 
-    // No category - search ALL categories for best match
-    // Collect all matches with their priorities
-    let bestMatch = null;
-    let bestPriority = Infinity;
+    // === NO CATEGORY - USE POINTS-BASED SCORING ===
 
+    // Step 1: Score categories using CategoryIndicators
+    let scores = {};
     for (const cat of Object.keys(_data.keywords)) {
-      const keywords = _data.keywords[cat];
-      for (const kw of keywords) {
-        if (upperName.includes(kw.keyword)) {
-          // Keywords are sorted by priority, so first match in each category is best for that category
-          if (kw.priority < bestPriority) {
-            bestPriority = kw.priority;
-            bestMatch = {
-              keyword: kw.keyword,
-              qboCode: kw.qboCode,
-              category: cat
-            };
-          }
-          break; // Only consider first match per category (they're sorted)
+      scores[cat] = 0;
+    }
+
+    for (const ind of _data.categoryIndicators) {
+      if (upperName.includes(ind.keyword)) {
+        if (scores[ind.category] !== undefined) {
+          scores[ind.category] += ind.points;
         }
       }
     }
 
-    return bestMatch;
+    // Step 2: Find all keyword matches, prefer whole word
+    let matchesByCategory = {};
+
+    for (const cat of Object.keys(_data.keywords)) {
+      const keywords = _data.keywords[cat];
+      let bestMatch = null;
+      let bestIsWholeWord = false;
+      let bestPriority = Infinity;
+
+      for (const kw of keywords) {
+        if (upperName.includes(kw.keyword)) {
+          const isWholeWord = isWholeWordMatch(upperName, kw.keyword);
+
+          // Prefer whole word, then lower priority
+          const isBetter =
+            (!bestMatch) ||
+            (isWholeWord && !bestIsWholeWord) ||
+            (isWholeWord === bestIsWholeWord && kw.priority < bestPriority);
+
+          if (isBetter) {
+            bestMatch = kw;
+            bestIsWholeWord = isWholeWord;
+            bestPriority = kw.priority;
+          }
+        }
+      }
+
+      if (bestMatch) {
+        matchesByCategory[cat] = {
+          keyword: bestMatch.keyword,
+          qboCode: bestMatch.qboCode,
+          priority: bestMatch.priority,
+          isWholeWord: bestIsWholeWord
+        };
+        // Add points for keyword match
+        // Whole word: +2 per word (multi-word keywords get bonus)
+        // Substring: +1 flat
+        const wordCount = bestMatch.keyword.split(/\s+/).length;
+        scores[cat] += bestIsWholeWord ? (2 * wordCount) : 1;
+      }
+    }
+
+    // Step 3: Find category with highest score
+    let bestCategory = null;
+    let bestScore = 0;
+
+    for (const [cat, score] of Object.entries(scores)) {
+      if (score > bestScore && matchesByCategory[cat]) {
+        bestScore = score;
+        bestCategory = cat;
+      }
+    }
+
+    if (!bestCategory) return null;
+
+    const match = matchesByCategory[bestCategory];
+    return {
+      keyword: match.keyword,
+      qboCode: match.qboCode,
+      category: bestCategory
+    };
   }
 
   /**
@@ -427,6 +546,14 @@ const DataLoader = (function() {
     return { ..._data };
   }
 
+  /**
+   * Get defaults (category defaults and fallbacks)
+   * @returns {Object} { byCategory: { [category]: code }, fallbacks: { AR: code, AP: code, RE: code } }
+   */
+  function getDefaults() {
+    return _data.defaults;
+  }
+
   // Public API
   return {
     load,
@@ -442,7 +569,8 @@ const DataLoader = (function() {
     findKeywordMatch,
     getString,
     getAllStrings,
-    getRawData
+    getRawData,
+    getDefaults
   };
 
 })();

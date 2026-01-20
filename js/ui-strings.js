@@ -64,6 +64,25 @@ const UI_STRINGS = {
   'step.5.none': { en: 'None / Not Applicable', fr: 'Aucun / Non applicable' },
   'step.5.info': { en: 'These accounts have special behavior in QuickBooks. If you don\'t have these accounts, select "None".', fr: 'Ces comptes ont un comportement spécial dans QuickBooks. Si vous n\'avez pas ces comptes, sélectionnez "Aucun".' },
 
+  // Step 5 - A/R multiple/single
+  'step.5.ar.none': { en: 'No A/R accounts found in your trial balance', fr: 'Aucun compte client trouvé dans votre balance de vérification' },
+  'step.5.ar.multiple.question': { en: 'Do you want multiple A/R accounts?', fr: 'Voulez-vous plusieurs comptes clients?' },
+  'step.5.ar.multiple.yes': { en: 'Yes, keep all as A/R', fr: 'Oui, garder tous comme A/R' },
+  'step.5.ar.multiple.no': { en: 'No, select one', fr: 'Non, sélectionner un seul' },
+  'step.5.ar.fallback': { en: 'Other accounts will be remapped to {type}', fr: 'Les autres comptes seront remappés vers {type}' },
+
+  // Step 5 - A/P multiple/single
+  'step.5.ap.none': { en: 'No A/P accounts found in your trial balance', fr: 'Aucun compte fournisseur trouvé dans votre balance de vérification' },
+  'step.5.ap.multiple.question': { en: 'Do you want multiple A/P accounts?', fr: 'Voulez-vous plusieurs comptes fournisseurs?' },
+  'step.5.ap.multiple.yes': { en: 'Yes, keep all as A/P', fr: 'Oui, garder tous comme A/P' },
+  'step.5.ap.multiple.no': { en: 'No, select one', fr: 'Non, sélectionner un seul' },
+  'step.5.ap.fallback': { en: 'Other accounts will be remapped to {type}', fr: 'Les autres comptes seront remappés vers {type}' },
+
+  // Step 5 - RE (always single)
+  'step.5.re.none': { en: 'No Retained Earnings accounts found in your trial balance', fr: 'Aucun compte de bénéfices non répartis trouvé dans votre balance de vérification' },
+  'step.5.re.warning': { en: 'Only one account can be Retained Earnings in QuickBooks. Select which one:', fr: 'Un seul compte peut être Bénéfices non répartis dans QuickBooks. Sélectionnez lequel:' },
+  'step.5.re.fallback': { en: 'Other accounts will be remapped to {type}', fr: 'Les autres comptes seront remappés vers {type}' },
+
   // Step 6 - Download
   'step.6.title': { en: 'Download Import Files', fr: 'Télécharger les fichiers d\'importation' },
   'step.6.description': { en: 'Your files are ready to download and import into QuickBooks Online', fr: 'Vos fichiers sont prêts à être téléchargés et importés dans QuickBooks Online' },

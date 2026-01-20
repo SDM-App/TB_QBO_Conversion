@@ -53,6 +53,11 @@ const AppState = (function() {
       ar: '',         // Accounts Receivable account number
       ap: '',         // Accounts Payable account number
       re: ''          // Retained Earnings account number
+    },
+    // Whether to allow multiple special accounts (A/R, A/P only - RE is always single)
+    specialAccountsMultiple: {
+      ar: true,       // Default: allow multiple A/R accounts
+      ap: true        // Default: allow multiple A/P accounts
     }
   };
 
@@ -324,6 +329,13 @@ const AppState = (function() {
     }
   }
 
+  function setSpecialAccountMultiple(type, allowMultiple) {
+    if (['ar', 'ap'].includes(type)) {
+      _structure.specialAccountsMultiple[type] = allowMultiple;
+      emit('stateChange', { type: `structure.specialMultiple.${type}`, value: allowMultiple });
+    }
+  }
+
   // ============================================
   // Uploaded Data (Step 1 in new flow)
   // ============================================
@@ -541,7 +553,8 @@ const AppState = (function() {
         8: 'Expense',
         9: 'Expense'
       },
-      specialAccounts: { ar: '', ap: '', re: '' }
+      specialAccounts: { ar: '', ap: '', re: '' },
+      specialAccountsMultiple: { ar: true, ap: true }
     };
     clearUploadedData();
     _mappingResults = {
@@ -614,6 +627,7 @@ const AppState = (function() {
     getStructure,
     setDigitMapping,
     setSpecialAccount,
+    setSpecialAccountMultiple,
     validateStep3,
 
     // Step 4: Verify Mappings

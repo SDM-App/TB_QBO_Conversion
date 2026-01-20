@@ -1169,8 +1169,12 @@ const UI = (function() {
         if (detailSelect) {
           if (typeName) {
             const detailTypes = AccountMapper.getDetailTypesForType(typeName);
-            // Auto-select first detail type as default
-            const defaultDetail = detailTypes.length > 0 ? detailTypes[0] : null;
+            // Get default from Excel (IsDefault column) or fall back to first
+            const category = DataLoader.getCategoryForType(typeName);
+            const defaultCode = category ? AccountMapper.getCategoryDefault(category) : null;
+            const defaultDetail = defaultCode
+              ? detailTypes.find(dt => dt.code === defaultCode) || (detailTypes.length > 0 ? detailTypes[0] : null)
+              : (detailTypes.length > 0 ? detailTypes[0] : null);
             detailSelect.innerHTML = `
               <option value="">${lang === 'fr' ? 'Selectionnez...' : 'Select...'}</option>
               ${detailTypes.map(dt => `<option value="${dt.code}" ${defaultDetail && dt.code === defaultDetail.code ? 'selected' : ''}>${dt.name}</option>`).join('')}
@@ -1439,11 +1443,19 @@ const UI = (function() {
     const apCandidates = results.accounts.filter(a => a.qboCode === 'AP');
     const reCandidates = results.accounts.filter(a => a.qboCode === 'RE');
 
-    // Build dropdown options
+    // Get fallback names for display
+    const arFallbackCode = AccountMapper.getFallback('AR');
+    const apFallbackCode = AccountMapper.getFallback('AP');
+    const reFallbackCode = AccountMapper.getFallback('RE');
+    const arFallbackInfo = arFallbackCode ? DataLoader.getDetailTypeByCode(arFallbackCode, lang) : null;
+    const apFallbackInfo = apFallbackCode ? DataLoader.getDetailTypeByCode(apFallbackCode, lang) : null;
+    const reFallbackInfo = reFallbackCode ? DataLoader.getDetailTypeByCode(reFallbackCode, lang) : null;
+
+    // Build dropdown options (for single-select mode)
     const buildOptions = (candidates, currentValue, noneLabel) => {
       let options = `<option value="">${noneLabel}</option>`;
       candidates.forEach(acct => {
-        const selected = currentValue === acct.accountNumber ? 'selected' : '';
+        const selected = currentValue === (acct.accountNumber || String(acct.index)) ? 'selected' : '';
         const label = acct.accountNumber ? `${acct.accountNumber} - ${acct.accountName}` : acct.accountName;
         options += `<option value="${acct.accountNumber || acct.index}" ${selected}>${label}</option>`;
       });
@@ -1451,6 +1463,150 @@ const UI = (function() {
     };
 
     const noneLabel = DataLoader.getString('step.5.none', lang);
+
+    // Build A/R section
+    const buildARSection = () => {
+      if (arCandidates.length === 0) {
+        return `
+          <div class="special-account-item">
+            <label class="special-account-label">${DataLoader.getString('step.5.ar.label', lang)}</label>
+            <p class="special-account-note">${DataLoader.getString('step.5.ar.none', lang)}</p>
+          </div>
+        `;
+      }
+
+      if (arCandidates.length === 1) {
+        // Single candidate - auto-select
+        return `
+          <div class="special-account-item">
+            <label class="special-account-label">${DataLoader.getString('step.5.ar.label', lang)}</label>
+            <p class="special-account-help">${DataLoader.getString('step.5.ar.help', lang)}</p>
+            <div class="special-account-single">
+              <span class="account-badge">${arCandidates[0].accountNumber || ''} ${arCandidates[0].accountName}</span>
+            </div>
+          </div>
+        `;
+      }
+
+      // Multiple candidates - ask if user wants multiple or single
+      return `
+        <div class="special-account-item">
+          <label class="special-account-label">${DataLoader.getString('step.5.ar.label', lang)}</label>
+          <p class="special-account-help">${DataLoader.getString('step.5.ar.help', lang)}</p>
+          <div class="special-account-question">
+            <p class="question-text">${DataLoader.getString('step.5.ar.multiple.question', lang)}</p>
+            <div class="radio-group">
+              <label class="radio-label">
+                <input type="radio" name="ar-multiple" value="yes" checked>
+                <span>${DataLoader.getString('step.5.ar.multiple.yes', lang)}</span>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="ar-multiple" value="no">
+                <span>${DataLoader.getString('step.5.ar.multiple.no', lang)}</span>
+              </label>
+            </div>
+          </div>
+          <div class="special-account-select-wrapper" id="ar-select-wrapper" style="display: none;">
+            <select class="form-select special-account-select" id="special-ar">
+              ${buildOptions(arCandidates, structure.specialAccounts.ar, noneLabel)}
+            </select>
+            ${arFallbackInfo ? `<p class="fallback-note">${DataLoader.getString('step.5.ar.fallback', lang).replace('{type}', arFallbackInfo.name)}</p>` : ''}
+          </div>
+        </div>
+      `;
+    };
+
+    // Build A/P section
+    const buildAPSection = () => {
+      if (apCandidates.length === 0) {
+        return `
+          <div class="special-account-item">
+            <label class="special-account-label">${DataLoader.getString('step.5.ap.label', lang)}</label>
+            <p class="special-account-note">${DataLoader.getString('step.5.ap.none', lang)}</p>
+          </div>
+        `;
+      }
+
+      if (apCandidates.length === 1) {
+        return `
+          <div class="special-account-item">
+            <label class="special-account-label">${DataLoader.getString('step.5.ap.label', lang)}</label>
+            <p class="special-account-help">${DataLoader.getString('step.5.ap.help', lang)}</p>
+            <div class="special-account-single">
+              <span class="account-badge">${apCandidates[0].accountNumber || ''} ${apCandidates[0].accountName}</span>
+            </div>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="special-account-item">
+          <label class="special-account-label">${DataLoader.getString('step.5.ap.label', lang)}</label>
+          <p class="special-account-help">${DataLoader.getString('step.5.ap.help', lang)}</p>
+          <div class="special-account-question">
+            <p class="question-text">${DataLoader.getString('step.5.ap.multiple.question', lang)}</p>
+            <div class="radio-group">
+              <label class="radio-label">
+                <input type="radio" name="ap-multiple" value="yes" checked>
+                <span>${DataLoader.getString('step.5.ap.multiple.yes', lang)}</span>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="ap-multiple" value="no">
+                <span>${DataLoader.getString('step.5.ap.multiple.no', lang)}</span>
+              </label>
+            </div>
+          </div>
+          <div class="special-account-select-wrapper" id="ap-select-wrapper" style="display: none;">
+            <select class="form-select special-account-select" id="special-ap">
+              ${buildOptions(apCandidates, structure.specialAccounts.ap, noneLabel)}
+            </select>
+            ${apFallbackInfo ? `<p class="fallback-note">${DataLoader.getString('step.5.ap.fallback', lang).replace('{type}', apFallbackInfo.name)}</p>` : ''}
+          </div>
+        </div>
+      `;
+    };
+
+    // Build RE section - always single select if multiple
+    const buildRESection = () => {
+      if (reCandidates.length === 0) {
+        return `
+          <div class="special-account-item">
+            <label class="special-account-label">${DataLoader.getString('step.5.re.label', lang)}</label>
+            <p class="special-account-note">${DataLoader.getString('step.5.re.none', lang)}</p>
+          </div>
+        `;
+      }
+
+      if (reCandidates.length === 1) {
+        return `
+          <div class="special-account-item">
+            <label class="special-account-label">${DataLoader.getString('step.5.re.label', lang)}</label>
+            <p class="special-account-help">${DataLoader.getString('step.5.re.help', lang)}</p>
+            <div class="special-account-single">
+              <span class="account-badge">${reCandidates[0].accountNumber || ''} ${reCandidates[0].accountName}</span>
+            </div>
+          </div>
+        `;
+      }
+
+      // Multiple RE accounts - must select one
+      return `
+        <div class="special-account-item">
+          <label class="special-account-label">${DataLoader.getString('step.5.re.label', lang)}</label>
+          <p class="special-account-help">${DataLoader.getString('step.5.re.help', lang)}</p>
+          <div class="alert alert-warning mt-sm">
+            <span class="alert-icon">!</span>
+            <div class="alert-content">
+              <div class="alert-message">${DataLoader.getString('step.5.re.warning', lang)}</div>
+            </div>
+          </div>
+          <select class="form-select special-account-select" id="special-re">
+            ${buildOptions(reCandidates, structure.specialAccounts.re, noneLabel)}
+          </select>
+          ${reFallbackInfo ? `<p class="fallback-note">${DataLoader.getString('step.5.re.fallback', lang).replace('{type}', reFallbackInfo.name)}</p>` : ''}
+        </div>
+      `;
+    };
 
     _mainEl.innerHTML = `
       <div class="wizard">
@@ -1462,35 +1618,9 @@ const UI = (function() {
 
         <div class="wizard-content">
           <div class="special-accounts-form">
-            <!-- A/R -->
-            <div class="special-account-item">
-              <label class="special-account-label">${DataLoader.getString('step.5.ar.label', lang)}</label>
-              <p class="special-account-help">${DataLoader.getString('step.5.ar.help', lang)}</p>
-              <select class="form-select special-account-select" id="special-ar">
-                ${buildOptions(arCandidates, structure.specialAccounts.ar, noneLabel)}
-              </select>
-              ${arCandidates.length === 0 ? `<p class="special-account-note">${lang === 'fr' ? 'Aucun compte de type A/R trouve' : 'No accounts with A/R type found'}</p>` : ''}
-            </div>
-
-            <!-- A/P -->
-            <div class="special-account-item">
-              <label class="special-account-label">${DataLoader.getString('step.5.ap.label', lang)}</label>
-              <p class="special-account-help">${DataLoader.getString('step.5.ap.help', lang)}</p>
-              <select class="form-select special-account-select" id="special-ap">
-                ${buildOptions(apCandidates, structure.specialAccounts.ap, noneLabel)}
-              </select>
-              ${apCandidates.length === 0 ? `<p class="special-account-note">${lang === 'fr' ? 'Aucun compte de type A/P trouve' : 'No accounts with A/P type found'}</p>` : ''}
-            </div>
-
-            <!-- Retained Earnings -->
-            <div class="special-account-item">
-              <label class="special-account-label">${DataLoader.getString('step.5.re.label', lang)}</label>
-              <p class="special-account-help">${DataLoader.getString('step.5.re.help', lang)}</p>
-              <select class="form-select special-account-select" id="special-re">
-                ${buildOptions(reCandidates, structure.specialAccounts.re, noneLabel)}
-              </select>
-              ${reCandidates.length === 0 ? `<p class="special-account-note">${lang === 'fr' ? 'Aucun compte de type RE trouve' : 'No accounts with Retained Earnings type found'}</p>` : ''}
-            </div>
+            ${buildARSection()}
+            ${buildAPSection()}
+            ${buildRESection()}
           </div>
 
           <!-- Info alert -->
@@ -1517,6 +1647,29 @@ const UI = (function() {
     renderStepper(5);
     attachNavHandlers();
 
+    // A/R multiple/single toggle handlers
+    document.querySelectorAll('input[name="ar-multiple"]').forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        const wrapper = document.getElementById('ar-select-wrapper');
+        if (wrapper) {
+          wrapper.style.display = e.target.value === 'no' ? 'block' : 'none';
+        }
+        // Store preference
+        AppState.setSpecialAccountMultiple('ar', e.target.value === 'yes');
+      });
+    });
+
+    // A/P multiple/single toggle handlers
+    document.querySelectorAll('input[name="ap-multiple"]').forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        const wrapper = document.getElementById('ap-select-wrapper');
+        if (wrapper) {
+          wrapper.style.display = e.target.value === 'no' ? 'block' : 'none';
+        }
+        AppState.setSpecialAccountMultiple('ap', e.target.value === 'yes');
+      });
+    });
+
     // Special account selection handlers
     document.getElementById('special-ar')?.addEventListener('change', (e) => {
       AppState.setSpecialAccount('ar', e.target.value);
@@ -1528,26 +1681,68 @@ const UI = (function() {
       AppState.setSpecialAccount('re', e.target.value);
     });
 
-    // Auto-select if only one candidate
-    if (arCandidates.length === 1 && !structure.specialAccounts.ar) {
-      const sel = document.getElementById('special-ar');
-      if (sel) {
-        sel.value = arCandidates[0].accountNumber || arCandidates[0].index;
-        AppState.setSpecialAccount('ar', sel.value);
-      }
-    }
-    if (apCandidates.length === 1 && !structure.specialAccounts.ap) {
-      const sel = document.getElementById('special-ap');
-      if (sel) {
-        sel.value = apCandidates[0].accountNumber || apCandidates[0].index;
-        AppState.setSpecialAccount('ap', sel.value);
-      }
-    }
-    if (reCandidates.length === 1 && !structure.specialAccounts.re) {
+    // Auto-select first RE if multiple and none selected
+    if (reCandidates.length > 1 && !structure.specialAccounts.re) {
       const sel = document.getElementById('special-re');
-      if (sel) {
+      if (sel && reCandidates.length > 0) {
         sel.value = reCandidates[0].accountNumber || reCandidates[0].index;
         AppState.setSpecialAccount('re', sel.value);
+      }
+    }
+  }
+
+  /**
+   * Process special account remapping when leaving Step 5
+   * Called before navigating to Step 6
+   */
+  function processSpecialAccountRemapping() {
+    const results = AppState.getMappingResults();
+    const structure = AppState.getStructure();
+
+    // Get candidates
+    const arCandidates = results.accounts.filter(a => a.qboCode === 'AR');
+    const apCandidates = results.accounts.filter(a => a.qboCode === 'AP');
+    const reCandidates = results.accounts.filter(a => a.qboCode === 'RE');
+
+    // Handle A/R remapping if user chose single
+    if (arCandidates.length > 1 && !structure.specialAccountsMultiple?.ar) {
+      const selectedAR = structure.specialAccounts.ar;
+      const arFallback = AccountMapper.getFallback('AR');
+      if (arFallback) {
+        arCandidates.forEach(acct => {
+          const acctId = acct.accountNumber || String(acct.index);
+          if (acctId !== selectedAR) {
+            AccountMapper.remapAccount(acct.index, arFallback);
+          }
+        });
+      }
+    }
+
+    // Handle A/P remapping if user chose single
+    if (apCandidates.length > 1 && !structure.specialAccountsMultiple?.ap) {
+      const selectedAP = structure.specialAccounts.ap;
+      const apFallback = AccountMapper.getFallback('AP');
+      if (apFallback) {
+        apCandidates.forEach(acct => {
+          const acctId = acct.accountNumber || String(acct.index);
+          if (acctId !== selectedAP) {
+            AccountMapper.remapAccount(acct.index, apFallback);
+          }
+        });
+      }
+    }
+
+    // Handle RE remapping - always single, remap non-selected
+    if (reCandidates.length > 1) {
+      const selectedRE = structure.specialAccounts.re;
+      const reFallback = AccountMapper.getFallback('RE');
+      if (reFallback) {
+        reCandidates.forEach(acct => {
+          const acctId = acct.accountNumber || String(acct.index);
+          if (acctId !== selectedRE) {
+            AccountMapper.remapAccount(acct.index, reFallback);
+          }
+        });
       }
     }
   }
@@ -1669,7 +1864,8 @@ const UI = (function() {
     init,
     render,
     renderStep,
-    updateNextButton
+    updateNextButton,
+    processSpecialAccountRemapping
   };
 
 })();
