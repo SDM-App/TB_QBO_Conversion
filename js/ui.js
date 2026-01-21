@@ -1169,9 +1169,8 @@ const UI = (function() {
         if (detailSelect) {
           if (typeName) {
             const detailTypes = AccountMapper.getDetailTypesForType(typeName);
-            // Get default from Excel (IsDefault column) or fall back to first
-            const category = DataLoader.getCategoryForType(typeName);
-            const defaultCode = category ? AccountMapper.getCategoryDefault(category) : null;
+            // Get default for this TYPE from IsDefault column in Excel
+            const defaultCode = DataLoader.getTypeDefault(typeName);
             const defaultDetail = defaultCode
               ? detailTypes.find(dt => dt.code === defaultCode) || (detailTypes.length > 0 ? detailTypes[0] : null)
               : (detailTypes.length > 0 ? detailTypes[0] : null);
@@ -1476,14 +1475,14 @@ const UI = (function() {
       }
 
       if (arCandidates.length === 1) {
-        // Single candidate - auto-select
+        // Single candidate - show dropdown with None option (pre-select the account)
         return `
           <div class="special-account-item">
             <label class="special-account-label">${DataLoader.getString('step.5.ar.label', lang)}</label>
             <p class="special-account-help">${DataLoader.getString('step.5.ar.help', lang)}</p>
-            <div class="special-account-single">
-              <span class="account-badge">${arCandidates[0].accountNumber || ''} ${arCandidates[0].accountName}</span>
-            </div>
+            <select class="form-select special-account-select" id="special-ar">
+              ${buildOptions(arCandidates, arCandidates[0].accountNumber || String(arCandidates[0].index), noneLabel)}
+            </select>
           </div>
         `;
       }
@@ -1528,13 +1527,14 @@ const UI = (function() {
       }
 
       if (apCandidates.length === 1) {
+        // Single candidate - show dropdown with None option (pre-select the account)
         return `
           <div class="special-account-item">
             <label class="special-account-label">${DataLoader.getString('step.5.ap.label', lang)}</label>
             <p class="special-account-help">${DataLoader.getString('step.5.ap.help', lang)}</p>
-            <div class="special-account-single">
-              <span class="account-badge">${apCandidates[0].accountNumber || ''} ${apCandidates[0].accountName}</span>
-            </div>
+            <select class="form-select special-account-select" id="special-ap">
+              ${buildOptions(apCandidates, apCandidates[0].accountNumber || String(apCandidates[0].index), noneLabel)}
+            </select>
           </div>
         `;
       }
@@ -1578,13 +1578,14 @@ const UI = (function() {
       }
 
       if (reCandidates.length === 1) {
+        // Single candidate - show dropdown with None option (pre-select the account)
         return `
           <div class="special-account-item">
             <label class="special-account-label">${DataLoader.getString('step.5.re.label', lang)}</label>
             <p class="special-account-help">${DataLoader.getString('step.5.re.help', lang)}</p>
-            <div class="special-account-single">
-              <span class="account-badge">${reCandidates[0].accountNumber || ''} ${reCandidates[0].accountName}</span>
-            </div>
+            <select class="form-select special-account-select" id="special-re">
+              ${buildOptions(reCandidates, reCandidates[0].accountNumber || String(reCandidates[0].index), noneLabel)}
+            </select>
           </div>
         `;
       }

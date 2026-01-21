@@ -131,11 +131,16 @@ const Exporter = (function() {
       if (debit) totalDebits += parseFloat(debit);
       if (credit) totalCredits += parseFloat(credit);
 
+      // Format account name with number (e.g., "1000 Cash")
+      const fullAccountName = account.accountNumber
+        ? `${account.accountNumber} ${account.accountName}`
+        : account.accountName;
+
       const row = [
         dateStr,
         journalNo,
         'Opening Balances',
-        account.accountName,
+        fullAccountName,
         debit ? formatNumber(debit) : '',
         credit ? formatNumber(credit) : ''
       ];
@@ -314,10 +319,15 @@ const Exporter = (function() {
     }
 
     const rows = accounts.slice(0, maxRows).map(a => {
+      // Format account name with number (e.g., "1000 Cash")
+      const fullAccountName = a.accountNumber
+        ? `${a.accountNumber} ${a.accountName}`
+        : a.accountName;
+
       const row = [
         dateStr,
         'Opening Balances',
-        a.accountName,
+        fullAccountName,
         a.balance > 0 ? formatNumber(a.balance) : '',
         a.balance < 0 ? formatNumber(Math.abs(a.balance)) : ''
       ];

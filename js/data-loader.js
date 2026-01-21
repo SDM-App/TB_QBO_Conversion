@@ -125,6 +125,7 @@ const DataLoader = (function() {
     // Reset defaults
     _data.defaults = {
       byCategory: {},
+      byType: {},      // Default detail type per type (from IsDefault column)
       fallbacks: {}
     };
 
@@ -138,11 +139,15 @@ const DataLoader = (function() {
    */
   function processDefaults() {
     for (const dt of _data.detailTypes) {
-      // Check IsDefault column - marks default detail type for category
+      // Check IsDefault column - marks default detail type for this TYPE
       const isDefault = dt.IsDefault;
       if (isDefault === 'TRUE' || isDefault === 'Y' || isDefault === '1' || isDefault === true) {
+        // Store by TYPE (not category) - each type can have its own default
+        _data.defaults.byType[dt.Type_Code] = dt.Code;
+
+        // Also store by category for backward compatibility (first digit fallback mapping)
         const category = _indexes.categoryByType[dt.Type_Code];
-        if (category) {
+        if (category && !_data.defaults.byCategory[category]) {
           _data.defaults.byCategory[category] = dt.Code;
         }
       }
@@ -554,6 +559,15 @@ const DataLoader = (function() {
     return _data.defaults;
   }
 
+  /**
+   * Get default detail type code for a specific type
+   * @param {string} typeCode - The type code (e.g., 'PPE', 'BANK')
+   * @returns {string|null} Detail type code or null if not found
+   */
+  function getTypeDefault(typeCode) {
+    return _data.defaults.byType[typeCode] || null;
+  }
+
   // Public API
   return {
     load,
@@ -570,7 +584,8 @@ const DataLoader = (function() {
     getString,
     getAllStrings,
     getRawData,
-    getDefaults
+    getDefaults,
+    getTypeDefault
   };
 
 })();
