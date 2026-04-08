@@ -332,7 +332,4 @@ const App = (function() {
 
 })();
 
-// Initialize when DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
-  App.init();
-});
+// Auth module (auth.js) handles DOMContentLoaded and calls App.init() after authentication
