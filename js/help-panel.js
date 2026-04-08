@@ -90,8 +90,8 @@ const HelpPanel = (function() {
         { key: 'warning', content: '<strong>Important:</strong> Import the Chart of Accounts FIRST, then the Journal Entry.' }
       ],
       fr: [
-        { key: 'title', content: 'Importation dans QuickBooks Online' },
-        { key: 'intro', content: 'Suivez ces étapes pour importer vos fichiers dans QuickBooks Online.' },
+        { key: 'title', content: 'Importation dans QuickBooks En Ligne' },
+        { key: 'intro', content: 'Suivez ces étapes pour importer vos fichiers dans QuickBooks En Ligne.' },
         { key: 'warning', content: '<strong>Important:</strong> Importez le Plan comptable EN PREMIER, puis l\'Écriture de journal.' }
       ]
     }
@@ -341,7 +341,7 @@ const HelpPanel = (function() {
     const appTab = _panel.querySelector('[data-tab="app"] span');
     const qboTab = _panel.querySelector('[data-tab="qbo"] span');
     if (appTab) appTab.textContent = lang === 'fr' ? 'Guide de l\'app' : 'App Guide';
-    if (qboTab) qboTab.textContent = lang === 'fr' ? 'Instructions QBO' : 'QBO Instructions';
+    if (qboTab) qboTab.textContent = lang === 'fr' ? 'Instructions QBE' : 'QBO Instructions';
 
     // Update download button
     const downloadSpan = _panel.querySelector('#help-download-pdf span');
@@ -540,7 +540,7 @@ const HelpPanel = (function() {
               <line x1="12" y1="8" x2="12" y2="12"></line>
               <line x1="12" y1="16" x2="12.01" y2="16"></line>
             </svg>
-            <p>${lang === 'fr' ? 'Les instructions QBO seront disponibles à l\'étape 6 (Téléchargement).' : 'QBO instructions will be available at Step 6 (Download).'}</p>
+            <p>${lang === 'fr' ? 'Les instructions QBE seront disponibles à l\'étape 6 (Téléchargement).' : 'QBO instructions will be available at Step 6 (Download).'}</p>
           </div>
         `;
       }
@@ -729,7 +729,7 @@ const HelpPanel = (function() {
       yPos = margin;
 
       // QBO Instructions section
-      addText(lang === 'fr' ? 'Instructions QuickBooks Online' : 'QuickBooks Online Instructions', 14, true);
+      addText(lang === 'fr' ? 'Instructions QuickBooks En Ligne' : 'QuickBooks Online Instructions', 14, true);
       yPos += 2;
 
       const qboContent = _helpContent.qbo[lang] || [];

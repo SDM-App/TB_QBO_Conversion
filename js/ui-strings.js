@@ -3,7 +3,7 @@
  */
 const UI_STRINGS = {
   'app.title': { en: 'Trial Balance Import Tool', fr: 'Outil d\'importation de balance de vérification' },
-  'app.subtitle': { en: 'QuickBooks Online Import Converter', fr: 'Convertisseur d\'importation QuickBooks Online' },
+  'app.subtitle': { en: 'QuickBooks Online Import Converter', fr: 'Convertisseur d\'importation QuickBooks En Ligne' },
   'app.footer': { en: 'Trial Balance Import Tool • Version 1.0', fr: 'Outil d\'importation de balance de vérification • Version 1.0' },
 
   // Step names
@@ -85,7 +85,7 @@ const UI_STRINGS = {
 
   // Step 6 - Download
   'step.6.title': { en: 'Download Import Files', fr: 'Télécharger les fichiers d\'importation' },
-  'step.6.description': { en: 'Your files are ready to download and import into QuickBooks Online', fr: 'Vos fichiers sont prêts à être téléchargés et importés dans QuickBooks Online' },
+  'step.6.description': { en: 'Your files are ready to download and import into QuickBooks Online', fr: 'Vos fichiers sont prêts à être téléchargés et importés dans QuickBooks En Ligne' },
   'step.6.summary.title': { en: 'Import Summary', fr: 'Résumé de l\'importation' },
   'step.6.coa.title': { en: 'Chart of Accounts', fr: 'Plan comptable' },
   'step.6.coa.button': { en: 'Download COA_IMPORT.xlsx', fr: 'Télécharger COA_IMPORT.xlsx' },

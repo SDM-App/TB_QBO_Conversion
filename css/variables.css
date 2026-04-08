@@ -62,6 +62,7 @@
   --color-bg-input: var(--brand-white);
   --color-bg-input-disabled: var(--brand-dark-grey-lighter);
   --color-bg-hover: var(--brand-dark-grey-lighter);
+  --color-bg-secondary: var(--color-bg-card-alt);
   --color-bg-selected: var(--brand-blueberry-110);
   
   /* ---------- Text ---------- */
@@ -80,11 +81,13 @@
   --color-border-input: var(--brand-dark-grey-lighter);
   
   /* ---------- Interactive / Buttons ---------- */
+  --color-primary: var(--brand-super-blue);
+
   --color-btn-primary-bg: var(--brand-super-blue);
   --color-btn-primary-text: var(--brand-white);
   --color-btn-primary-hover: #1B5AD9;
   --color-btn-primary-active: #1550C9;
-  
+
   --color-btn-secondary-bg: transparent;
   --color-btn-secondary-text: var(--brand-white);
   --color-btn-secondary-border: var(--brand-white);
@@ -232,6 +235,7 @@
   --color-bg-input: var(--brand-white);
   --color-bg-input-disabled: #E5E7EB;
   --color-bg-hover: #D1D5DB;
+  --color-bg-secondary: var(--color-bg-card-alt);
   --color-bg-selected: #DBEAFE;
 
   /* ---------- Text ---------- */
@@ -250,6 +254,8 @@
   --color-border-input: #9CA3AF;
 
   /* ---------- Interactive / Buttons ---------- */
+  --color-primary: var(--brand-super-blue);
+
   --color-btn-primary-bg: var(--brand-super-blue);
   --color-btn-primary-text: var(--brand-white);
   --color-btn-primary-hover: #1B5AD9;

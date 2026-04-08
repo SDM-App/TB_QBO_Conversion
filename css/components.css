@@ -1502,7 +1502,8 @@ textarea.form-input {
    ============================================ */
 
 .mc-toggle-wrapper {
-  display: flex;
+  display: none; /* Hidden until MC export is implemented */
+  /* display: flex; */
   align-items: center;
   gap: var(--space-lg);
   padding: var(--space-md);
